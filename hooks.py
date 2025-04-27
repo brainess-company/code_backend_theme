@@ -21,16 +21,17 @@
 #
 #############################################################################
 import base64
-
+import logging
 from odoo import api, SUPERUSER_ID
 from odoo.modules import get_module_resource
 
-
+_logger = logging.getLogger(__name__)
 def test_pre_init_hook(cr):
     """pre init hook"""
 
     env = api.Environment(cr, SUPERUSER_ID, {})
     menu_item = env['ir.ui.menu'].search([('parent_id', '=', False)])
+    _logger.info(menu_item)
 
     for menu in menu_item:
         if menu.name == 'Contacts':
@@ -154,9 +155,19 @@ def test_pre_init_hook(cr):
                 'code_backend_theme', 'static', 'src', 'img', 'icons', 'eLearning.png')
             menu.write({'web_icon_data': base64.b64encode(open(img_path, "rb").read())})
         if menu.name == 'Members':
+            _logger.info(f"Validated profundidade for record {menu.name}")
             img_path = get_module_resource(
                 'code_backend_theme', 'static', 'src', 'img', 'icons', 'Members.png')
             menu.write({'web_icon_data': base64.b64encode(open(img_path, "rb").read())})
+
+    fund = env['ir.ui.menu'].with_context(
+        {'ir.ui.menu.full_list': True}).search([('name', '=', 'Fundações')], limit=1)
+    _logger.info(f"Validated profundidade for record {fund}")
+
+    if fund:
+        img_path = get_module_resource(
+            'code_backend_theme', 'static', 'src', 'img', 'icons', 'Fundacoes2.png')
+        fund.write({'web_icon_data': base64.b64encode(open(img_path, "rb").read())})
 
 
 def test_post_init_hook(cr, registry):
@@ -164,6 +175,8 @@ def test_post_init_hook(cr, registry):
 
     env = api.Environment(cr, SUPERUSER_ID, {})
     menu_item = env['ir.ui.menu'].search([('parent_id', '=', False)])
+    _logger.info(menu_item)
+    _logger.info("LOGGER")
 
     for menu in menu_item:
         if menu.name == 'Contacts':
@@ -287,6 +300,19 @@ def test_post_init_hook(cr, registry):
                 'code_backend_theme', 'static', 'src', 'img', 'icons', 'eLearning.png')
             menu.write({'web_icon_data': base64.b64encode(open(img_path, "rb").read())})
         if menu.name == 'Members':
+            print(menu.name)
+            _logger.info(f"Validated profundidade for record {menu.name}")
             img_path = get_module_resource(
                 'code_backend_theme', 'static', 'src', 'img', 'icons', 'Members.png')
             menu.write({'web_icon_data': base64.b64encode(open(img_path, "rb").read())})
+
+    fund = env['ir.ui.menu'].with_context({'ir.ui.menu.full_list': True}).search(
+        [('name', '=', 'Fundações')], limit=1)
+    _logger.info(f"Validated profundidade for record {fund}")
+    if fund:
+        img_path = get_module_resource(
+            'code_backend_theme', 'static', 'src', 'img', 'icons', 'Fundacoes2.png')
+        fund.write({'web_icon_data': base64.b64encode(open(img_path, "rb").read())})
+
+
+
